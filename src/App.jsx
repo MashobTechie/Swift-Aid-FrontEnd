@@ -1,10 +1,25 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Home from "./pages/Home";
+import AuthProvider from "./contexts/AuthContext";
+import "./App.css";
+import SignUp from "./pages/SignUp";
 
 const App = () => {
   return (
-    <div className=' '>Hello SwiftAid</div>
-  )
-}
+    <>
+      <Router>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth/signup" element={<SignUp/>}/>
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </>
+  );
+};
 
-export default App
+export default App;
