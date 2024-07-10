@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
 import Home from "./pages/Home";
-import AuthProvider from "./contexts/AuthContext";
+
 import "./App.css";
 import SignUp from "./pages/SignUp";
+import AuthProvider from "./contexts/AuthContext";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/auth/signup" element={<SignUp/>}/>
           </Routes>
+          <ToastContainer/>
         </AuthProvider>
       </Router>
     </>

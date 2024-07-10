@@ -7,56 +7,70 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const AuthContext = createContext();
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
 const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const appURL = import.meta.env.SWIFTAID_BACKEND_URL;
+  const appURL = import.meta.env.VITE_SWIFTAID_BACKEND_URL;
 
-  //   States
+  // States
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(null);
+  const [verification_token, setVerificationToken] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-    setUser(JSON.parse(localStorage.getItem("user")));
+    const storedToken = localStorage.getItem("verification_token");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedToken && storedUser) {
+      setVerificationToken(storedToken);
+      setUser(storedUser);
+      console.log("Stored token:", storedToken);
+      console.log("Stored user:", storedUser);
+    } else {
+      console.log("No stored token or user found.");
+    }
   }, []);
-  console.log("Token in authentication", token);
 
+  console.log("Token in authentication", verification_token);
+  console.log("Backend URL:", appURL);
   const signup = async (userData) => {
     setLoading(true);
-    axios
-    .post(`${appURL}/auth/signup`, userData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then ((response) => {
-        console.log(response.userData);
-        setToken(response.data.userData.token)
-        setUser(response.data.userData.user)
-        localStorage.setItem('token',response.data.userData.token )
-        localStorage.setItem('user', response.data.userData.user)
-        toast.success("Signup Successful");
-        navigate("/");
-    })
-    .catch((error) => {
-        console.log(error);
-        error?.response
-          ? toast.error(error.response.data.message)
-          : toast.error("An Error occured");
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const response = await axios.post(`${appURL}/auth/signup`, userData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      console.log("Signup response data:", response.data);
+      const { verification_token, user } = response.data.userData;
+  
+      // Set verification_token and user in state
+      setVerificationToken(verification_token);
+      setUser(user);
+  
+      // Store verification_token and user in localStorage
+      localStorage.setItem("verification_token", verification_token);
+      localStorage.setItem("user", JSON.stringify(user));
+  
+      toast.success("Signup Successful");
+      navigate("/");
+    } catch (error) {
+      console.log("Signup error:", error);
+      error?.response
+        ? toast.error(error.response.data.message)
+        : toast.error("An Error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   const values = {
     loading,
-    token,
+    verification_token,
     user,
     signup,
   };
