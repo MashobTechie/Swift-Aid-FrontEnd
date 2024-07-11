@@ -15,7 +15,7 @@ const App = () => {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/auth/signup" element={<SignUp/>}/>
+            <Route path="/client/auth/signup" element={<SignUp/>}/>
           </Routes>
           <ToastContainer/>
         </AuthProvider>
